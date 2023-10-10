@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -21,12 +24,14 @@ public class Drivetrain {
   private final Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
   private final Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
 
-  private final SwerveModule m_frontLeft = new SwerveModule(1, 2, 0, 1, 2, 3);
-  private final SwerveModule m_frontRight = new SwerveModule(3, 4, 4, 5, 6, 7);
-  private final SwerveModule m_backLeft = new SwerveModule(5, 6, 8, 9, 10, 11);
-  private final SwerveModule m_backRight = new SwerveModule(7, 8, 12, 13, 14, 15);
+  private final SwerveModule m_frontLeft = new SwerveModule(56, 55);
+  private final SwerveModule m_frontRight = new SwerveModule(54, 53);
+  private final SwerveModule m_backLeft = new SwerveModule(58, 57);
+  private final SwerveModule m_backRight = new SwerveModule(52, 51);
 
-  private final AnalogGyro m_gyro = new AnalogGyro(0);
+  //private final AnalogGyro m_gyro = null;//new AnalogGyro(0);
+  private final WPI_TalonSRX m_spareTalon = new WPI_TalonSRX(9);
+    private final WPI_PigeonIMU m_gyro = new WPI_PigeonIMU(m_spareTalon);
 
   private final SwerveDriveKinematics m_kinematics =
       new SwerveDriveKinematics(
