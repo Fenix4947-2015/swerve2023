@@ -4,6 +4,11 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
+import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.CANCoderConfiguration;
+import com.ctre.phoenix.sensors.SensorInitializationStrategy;
+import com.ctre.phoenix.sensors.SensorTimeBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -15,9 +20,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 
 public class SwerveModule {
   private static final double kWheelRadius = 0.0508;
@@ -31,7 +33,7 @@ public class SwerveModule {
   private final CANSparkMax m_turningMotor;
 
   private final RelativeEncoder m_driveEncoder;
-  private final RelativeEncoder m_turningEncoder;
+  private final CANCoder m_turningEncoder;
 
   // Gains are for example purposes only - must be determined for your own robot!
   private final PIDController m_drivePIDController = new PIDController(1, 0, 0);
@@ -61,12 +63,21 @@ public class SwerveModule {
    */
   public SwerveModule(
       int driveMotorChannel,
-      int turningMotorChannel) {
+      int turningMotorChannel,
+      int turningEncoderId) {
     m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
     m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
 
     m_driveEncoder = m_driveMotor.getEncoder();//new Encoder(driveEncoderChannelA, driveEncoderChannelB);
-    m_turningEncoder = m_turningMotor.getEncoder();//new Encoder(turningEncoderChannelA, turningEncoderChannelB);
+    m_turningEncoder = new CANCoder(turningEncoderId);//new Encoder(turningEncoderChannelA, turningEncoderChannelB);
+    CANCoderConfiguration config = new CANCoderConfiguration();
+    // set units of the CANCoder to radians, with velocity being radians per second
+    config.sensorCoefficient = 2 * Math.PI / 4096.0;
+    config.unitString = "rad";
+    config.sensorTimeBase = SensorTimeBase.PerSecond;
+    config.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
+    config.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+    m_turningEncoder.configAllSettings(config);
 
     // Set the distance per pulse for the drive encoder. We can simply use the
     // distance traveled for one rotation of the wheel divided by the encoder
@@ -135,7 +146,8 @@ public class SwerveModule {
     // final double turnOutput =
     //     m_turningPIDController.calculate(m_turningEncoder.getDistance(), state.angle.getRadians());
     final double turnOutput =
-        m_turningPIDController.calculate(m_turningEncoder.getPosition(), state.angle.getRadians());
+        m_turningPIDController.calculate(m_turningEncoder.getAbsolutePosition(), 
+        state.angle.getRadians());
 
     final double turnFeedforward =
         m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
