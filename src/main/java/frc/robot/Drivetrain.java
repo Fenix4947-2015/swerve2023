@@ -12,7 +12,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.wpilibj.AnalogGyro;
 
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain {
@@ -24,10 +23,10 @@ public class Drivetrain {
   private final Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
   private final Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
 
-  private final SwerveModule m_frontLeft = new SwerveModule(56, 55, 61);
-  private final SwerveModule m_frontRight = new SwerveModule(54, 53, 62);
-  private final SwerveModule m_backLeft = new SwerveModule(58, 57, 63);
-  private final SwerveModule m_backRight = new SwerveModule(52, 51, 64);
+  private final SwerveModule m_frontLeft = new SwerveModule(56, 55, 62, 0);
+  private final SwerveModule m_frontRight = new SwerveModule(54, 53, 61, 0);
+  private final SwerveModule m_backLeft = new SwerveModule(58, 57, 63, 0);
+  private final SwerveModule m_backRight = new SwerveModule(52, 51, 62, 0);
 
   //private final AnalogGyro m_gyro = null;//new AnalogGyro(0);
   private final WPI_TalonSRX m_spareTalon = new WPI_TalonSRX(9);

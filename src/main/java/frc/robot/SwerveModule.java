@@ -64,7 +64,8 @@ public class SwerveModule {
   public SwerveModule(
       int driveMotorChannel,
       int turningMotorChannel,
-      int turningEncoderId) {
+      int turningEncoderId,
+      int turningEncoderMagnetOffsetDegrees) {
     m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
     m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
 
@@ -77,6 +78,7 @@ public class SwerveModule {
     config.sensorTimeBase = SensorTimeBase.PerSecond;
     config.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
     config.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+    config.magnetOffsetDegrees = turningEncoderMagnetOffsetDegrees;
     m_turningEncoder.configAllSettings(config);
 
     // Set the distance per pulse for the drive encoder. We can simply use the
